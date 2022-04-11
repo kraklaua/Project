@@ -4,14 +4,6 @@ author: "Sara Knight, Alexa Kraklau"
 date: "2/23/2022"
 output: github_document
 ---
-access code: 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
-
-**Ideas**
-1. color-coordinated
-2. pull fonts from the internet
-5. Keep the movies/ Get rid of the movies?
-6. What do they mean by crossover?
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -27,9 +19,6 @@ library(extrafont)
 library(infer)
 
 ```
-
-
-
 
 
 In this course, we will:
@@ -111,6 +100,33 @@ boxplot1 <- boxplot1 + labs(title = "Captured versus Caught for Each Character",
 boxplot1
 ```
 **Write R programs for simulations from probability models and randomization-based experiments.**
+
+```{r bootstrapping}
+scooby_tv_tidy <- scoobydoo_tv %>% 
+  select(index, imdb) %>% 
+  filter( imdb != "NULL")
+
+scooby_sample <- scooby_tv_tidy %>% 
+  rep_sample_n(size = 50, replace = TRUE, reps = 1000)
+
+scooby_sample <- as.data.frame(apply(scooby_sample, 2, as.numeric)) 
+
+scoobyboot <- scooby_sample %>% 
+  group_by(index) %>% 
+  summarize(mean_imdb = mean(imdb))
+
+scoobyboot
+```
+
+```{r graph bootstrapping}
+
+ggplot(scoobyboot, aes(x = mean_imdb)) +
+  geom_histogram(binwidth = .1, color = scooby_gang_colors("Fred Blue"), fill = scooby_gang_colors("Fred Orange")) +
+  labs(title = "Distribution of Sample Means from 1000 Resamples", x = "Sampled Mean IMDB", y = "Count", tag = "3")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
 **Use source documentation and other resources to troubleshoot and extend R programs.**
 
 
@@ -228,32 +244,10 @@ scoobydoo_world_map
 ```
 
 
-```{r bootstrapping}
-scooby_tv_tidy <- scoobydoo_tv %>% 
-  select(index, imdb) %>% 
-  filter( imdb != "NULL")
-
-scooby_sample <- scooby_tv_tidy %>% 
-  rep_sample_n(size = 50, replace = TRUE, reps = 1000)
-
-scooby_sample <- as.data.frame(apply(scooby_sample, 2, as.numeric)) 
-
-scoobyboot <- scooby_sample %>% 
-  group_by(index) %>% 
-  summarize(mean_imdb = mean(imdb))
-
-scoobyboot
-```
 
 
-```{r graph bootstrapping}
 
-ggplot(scoobyboot, aes(x = mean_imdb)) +
-  geom_histogram(binwidth = .1, color = scooby_gang_colors("Fred Blue"), fill = scooby_gang_colors("Fred Orange")) +
-  labs(title = "Distribution of Sample Means from 1000 Resamples", x = "Sampled Mean IMDB", y = "Count", tag = "3")+
-  theme(plot.title = element_text(hjust = 0.5))
 
-```
 
 
 
@@ -343,120 +337,31 @@ ggplot(scoobyboot, aes(x = mean_imdb)) +
 
 
 
-
-
-**Questions**
-
-1. How did the average running time of Scooby-Doo change?
-
-```{r season vs. airtime}
-
-scoobydoo %>% 
-  ggplot(mapping = aes(x = season, y = run_time))+
-    geom_boxplot()
-
+```{r catchphrases}
+scoobydoo_cp <- scoobydoo %>% 
+  select("another_mystery", "jeepers", "jinkies", "my_glasses", "zoinks","groovy","rooby_rooby_roo")
+scoobydoo_cp[scoobydoo_cp == "NULL"] <- "0"
+scoobydoo_cp[] <- lapply(scoobydoo_cp, as.numeric)
+fred <- sum(scoobydoo_cp$another_mystery) 
+daphne <- sum(scoobydoo_cp$jeepers)
+velma1 <- sum(scoobydoo_cp$jinkies)
+velma2 <- sum(scoobydoo_cp$my_glasses)
+shaggy1 <- sum(scoobydoo_cp$zoinks)
+shaggy2 <- sum(scoobydoo_cp$groovy)
+scooby <- sum(scoobydoo_cp$rooby_rooby_roo)
+velma <- sum(velma1,velma2)
+shaggy <- sum(shaggy1,shaggy2)
+character <- c("Fred", "Daphne", "Velma", "Shaggy", "Scooby")
+catch_phrase <- c(fred, daphne, velma, shaggy, scooby)
+gang_cp <- data.frame(character, catch_phrase)
+ggplot(data = gang_cp)+
+  geom_bar(mapping = aes(x = character, y = catch_phrase), stat = "identity")+
+  scale_fill_manual(values =c("Fred" = scooby_gang_colors("Fred Blue"),
+                              "Daphne" = scooby_gang_colors("Daphne Purple"),
+                              "Velma" = scooby_gang_colors("Velma Orange"),
+                              "Shaggy" =scooby_gang_colors("Shaggy Green"),
+                              "Scooby" = scooby_gang_colors("Scooby Brown")))
 ```
-What is up with season 2?
-
-```{r season vs. imbd}
-
-scoobydoo %>% 
-  ggplot(mapping = aes(x = index, y = imdb))+
-  geom_point()
-
-```
-
-At the very start it looks like they were highly rated. Then it almost stabilized a little. Finally all over the place. Where I would go next is how well are the movies rated compared to shows or crossovers.
-
-```{r Monster caught by Fred}
-
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = caught_fred))+
-  geom_bar(stat = "identity", fill = scooby_gang_colors("Fred Orange"))
-
-```
-
-This is just me playing around with color and trying to graph things. 
-
-```{r Fred was captured}
-scoobycleaned %>% 
-    ggplot(mapping = aes(y = season, x = captured_fred))+
-  geom_bar(stat = "identity", fill = "light blue")
-```
-
-Fred captures the monster only slightly more than getting caught. Get rid of null?
-
-```{r Daphnie catches the monster}
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = caught_daphnie))+
-  geom_bar(stat = "identity", fill = "purple")
-```
-Daphnie almost never caught the monster.
-
-```{r Daphnie caught by the monster}
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = captured_daphnie))+
-  geom_bar(stat = "identity", fill = "purple")
-```
-However she got caught less than I thought (I tried light purple and it didn't work)
-
-
-```{r Velma caught the monster}
-
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = caught_velma))+
-  geom_bar(stat = "identity", fill = " dark orange")
-
-```
-
-Velma was a little more sucessful than Daphnie, but not much
-
-```{r Velma got caught by the monster}
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = captured_velma))+
-  geom_bar(stat = "identity", fill = "dark orange")
-```
-Looks to close to Daphnie. (I couldn't use light orange)
-
-```{r Shaggy caught the monster}
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = caught_shaggy))+
-  geom_bar(stat = "identity", fill = "light green")
-```
-
-Now I'm confused about what null would mean. My first thought would be the episodes where Shaggy wasn't in them, but that doesn't make sense.
-
-```{r Shaggy caught by monster}
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = captured_shaggy))+
-  geom_bar(stat = "identity", fill = "light green")
-```
-
-Less than Velma and Daphnie, but more than Fred.
-
-```{r Scooby caught the monster}
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = caught_scooby))+
-  geom_bar(stat = "identity", fill = "tan")
-```
-
-I'm kinda suprised, kinda not that Scooby caught the most monsters.
-
-```{r Scooby caught by monster}
-scoobycleaned %>% 
-  ggplot(mapping = aes(y = season, x = captured_scooby))+
-  geom_bar(stat = "identity", fill = "tan")
-```
-
-```{r bar graph}
-
-ggplot(data=scoobydoo, aes(x=monster_real, fill=monster_real)) +
-    geom_bar(colour="blue", stat="Count") +
-    guides(fill=FALSE)
-
-```
-
-
 
 
 
