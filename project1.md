@@ -3,6 +3,8 @@ Scooby-Doo
 Sara Knight, Alexa Kraklau
 2/23/2022
 
+access code: ghp\_tHkEZaAkwU4wAegNSUPPWjortGDN0g4Wk57J
+
 **Ideas** 1. color-coordinated 2. pull fonts from the internet 5. Keep
 the movies/ Get rid of the movies? 6. What do they mean by crossover?
 
@@ -111,7 +113,7 @@ exploratory analysis and presentations.**
 
 ``` r
 boxplot1 <- ggplot(data = caught_captured, aes(x = character, fill = action)) +
-  geom_bar(stat = "count", position = position_dodge(), alpha = 1,) +
+  geom_bar(stat = "count", position = position_dodge(), alpha = 1,) + 
   scale_fill_manual(values=c("captured" = "#00CFD4",
                              "caught" = "#00E304"))
 
@@ -122,17 +124,17 @@ boxplot1 <- boxplot1 + labs(title = "Captured versus Caught for Each Character",
               fill="Action",
               tag = "1") + theme(plot.title = element_text(hjust = 0.5)) +
   theme(plot.subtitle = element_text(hjust = 0.5)) +
-  theme(text=element_text(size=10,  family="Times New Roman", color= "#6352A3" ))
+  theme(text=element_text(size=10,  family="Times New Roman", color= "blue" ))
 
 boxplot1
 ```
 
 ![](project1_files/figure-gfm/side%20by%20side%20bar%20graph-1.png)<!-- -->
-Write R programs for simulations from probability models and
-randomization-based experiments. Use source documentation and other
-resources to troubleshoot and extend R programs.
+**Write R programs for simulations from probability models and
+randomization-based experiments.** **Use source documentation and other
+resources to troubleshoot and extend R programs.**
 
-**———-Write clear, efficient, and well-documented R programs.———-**
+**Write clear, efficient, and well-documented R programs.**
 
 Trying to create a color palette for our project
 
@@ -292,7 +294,7 @@ scoobyboot
 
 ``` r
 ggplot(scoobyboot, aes(x = mean_imdb)) +
-  geom_histogram(binwidth = .1, color = "#00CFD4", fill = "#F8991D") +
+  geom_histogram(binwidth = .1, color = scooby_gang_colors("Fred Blue"), fill = scooby_gang_colors("Fred Orange")) +
   labs(title = "Distribution of Sample Means from 1000 Resamples", x = "Sampled Mean IMDB", y = "Count", tag = "3")+
   theme(plot.title = element_text(hjust = 0.5))
 ```
@@ -405,7 +407,7 @@ is how well are the movies rated compared to shows or crossovers.
 ``` r
 scoobycleaned %>% 
   ggplot(mapping = aes(y = season, x = caught_fred))+
-  geom_bar(stat = "identity", fill = "light blue")
+  geom_bar(stat = "identity", fill = scooby_gang_colors("Fred Orange"))
 ```
 
 ![](project1_files/figure-gfm/Monster%20caught%20by%20Fred-1.png)<!-- -->
@@ -510,10 +512,3 @@ ggplot(data=scoobydoo, aes(x=monster_real, fill=monster_real)) +
     ## "none")` instead.
 
 ![](project1_files/figure-gfm/bar%20graph-1.png)<!-- -->
-
-``` r
-ggplot(data = scoobydoo, aes(x = captured_scooby, y = season, fill = season)) +
-  geom_bar(stat = "Identity", position = position_dodge(), alpha = 0.75) 
-```
-
-![](project1_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
